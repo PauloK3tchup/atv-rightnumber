@@ -11,9 +11,10 @@
     <main>
       <section>
         <p class="tempo" id="tempo"></p>
-        <h1>ESCOLHA UM NÚMERO ENTRE 0 E 9!!!</h1>
+        <h1>ESCOLHA UM [Number] ENTRE 0 E 9!!!</h1>
         <h2 class="sera" id="sera">>>> ? <<<</h2>
-        <p id="dica">???????</p>
+        <p class="dica" id="dica">???????</p>
+        <p class="tents" id="tents">FALTAM [3] ACERTOS!!!</p>
         <div class="botoes">
           <ul>
             <li>
@@ -49,6 +50,12 @@
           </ul>
         </div>
       </section>
+      <div onclick="musiPam()" class="spamton">
+        <img id="spamton" src="src/img/spamton.gif" alt="" />
+        <audio id="bigshot" preload="auto" loop>
+          <source src="src/snd/NOW'S YOUR CHANCE TO BE A.mp3" />
+        </audio>
+      </div>
       <script>
         let t = 1000;
         let contagem = setTimeout(menosUm, t);
@@ -57,7 +64,17 @@
         let numero = Math.floor(Math.random() * 10);
         let dica = document.getElementById("dica");
         let tempo = document.getElementById("tempo");
+        let tents = document.getElementById("tents");
         let acertos = 0;
+
+        let som_v = new Audio();
+        som_v.src = "src/snd/victory.mp3";
+        let errado = new Audio();
+        errado.src = "src/snd/wrong-answer-buzzer.mp3";
+        let certo = new Audio();
+        certo.src = "src/snd/correct-answer-ff.mp3";
+        let boom = new Audio();
+        boom.src = "src/snd/deltarune-explosion.mp3";
 
         tempo.innerText = "00:" + segundos;
         acabou = false;
@@ -66,27 +83,37 @@
         function trocaNum(a) {
           if (!acabou) {
             if (a < numero) {
-              dica.innerText = "O NÚMERO É MAIOR!";
+              dica.innerText = "O NÚMERO É [MAIOR E MELHOR]!";
               t -= 100;
+              errado.play();
             } else {
               if (a > numero) {
-                dica.innerText = "O NÚMERO É MENOR!";
+                dica.innerText = "O NÚMERO É [Pequeno e Fraco]!";
                 t -= 100;
+                errado.play();
               } else {
-                dica.innerText = "ACERTOU! MAS AGORA MUDOU!!";
+                dica.innerText = "CORRETO! [Seu prêmio é] NÚMERO MUDOU!!";
+                certo.play();
                 document.getElementById("sera").innerText =
                   ">>> " + numero + " <<<";
                 numero = Math.floor(Math.random() * 10);
                 console.log(numero);
                 acertos++;
+                tents.innerText = "FALTAM [" + (3 - acertos) + "] ACERTOS!!!";
                 if (acertos >= 3) {
                   acabou = true;
                   dica.innerText = "VENCEU!!!";
                   segundos = 0;
+                  tempo.innerText = "00:0" + segundos;
+                  som_v.play();
                 }
               }
             }
           }
+        }
+
+        function musiPam() {
+          document.getElementById("bigshot").play();
         }
 
         function menosUm() {
@@ -101,7 +128,10 @@
               contagem = setTimeout(menosUm, t);
             } else {
               acabou = true;
-              dica.innerText = "PERDEU!!!";
+              dica.innerText = "PERDEU!!! [Fracasso]";
+              document.getElementById("spamton").src = "src/img/boom.gif";
+              boom.play();
+              document.getElementById("bigshot").pause();
             }
           }
         }
